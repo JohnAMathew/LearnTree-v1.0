@@ -11,8 +11,8 @@ app = Flask(__name__)
 CORS(app)
 
 # ---------- API KEYS ----------
-GEMINI_API_KEY = "AIzaSyBc70X28NtqrbzEpkz6uKcbLfXgDZ1Sixs"
-YOUTUBE_API_KEY = "AIzaSyAwoGu3XgUVmIPtl2ZGlR1ZoJR-veqEUD4"
+GEMINI_API_KEY = "YOUR_API_KEY"
+YOUTUBE_API_KEY = "YOUR_API_KEY"
 
 # Gemini API client
 client = genai.Client(api_key=GEMINI_API_KEY)
@@ -157,3 +157,4 @@ def generate():
 if __name__ == "__main__":
     print("Flask server running at http://127.0.0.1:5000")
     app.run(debug=True)
+
