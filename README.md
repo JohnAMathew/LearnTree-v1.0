@@ -34,6 +34,6 @@ Tired of scattered notes, clunky apps, and ineffective revision? LearnTree bring
 ---
 
 ### 🤝 Team
-Made with ❤️ by Ayush and John!
+Made with ❤️ by Ayush(@AyushDev19) and John!
 
 > **LearnTree — Plant a concept. Grow your mind.**
