@@ -32,6 +32,10 @@ def youtube_search(query):
         youtube_set.append({"title": title, "url": video_url})
     return youtube_set
 
+@app.route("/")
+def home():
+    return "Hello, LearnTree is live!"
+
 @app.route("/ytlink", methods=["GET"])
 def ytlink():
     topic = request.args.get("topic")
@@ -124,6 +128,7 @@ def generate():
 if __name__ == "__main__":
     print("Flask server running at http://127.0.0.1:5000")
     app.run(host="0.0.0.0", port=5000)
+
 
 
 
