@@ -5,7 +5,7 @@ from google import genai
 from google.genai import types
 from googleapiclient.discovery import build
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../client", static_url_path="")
 CORS(app)
 
 GEMINI_API_KEY = "YOUR_API_KEY"
@@ -124,6 +124,7 @@ def generate():
 if __name__ == "__main__":
     print("Flask server running at http://127.0.0.1:5000")
     app.run(host="0.0.0.0", port=5000)
+
 
 
 
