@@ -19,7 +19,28 @@
 Tired of scattered notes, clunky apps, and ineffective revision? LearnTree brings everything into one clean interface, saving your time and boosting your results.
 
 ---
+---
 
+### 🧪 Getting Started
+
+#### Step 1: Initialize the Backend Server
+
+Make sure you have Python 3.7+ installed.
+
+```bash
+cd server
+python main.py
+```
+This will start the backend server required for AI and TTS features.
+#### Step 2: Launch the Electron App
+
+```bash
+cd client
+npm install electron
+npm start
+```
+The Electron frontend will launch as a desktop app.
+<br><br>
 
 ### 📸 Preview
 <img width="1052" height="707" alt="image" src="https://github.com/user-attachments/assets/069fb03d-aef0-461c-9e02-1b3cd609145d" />
