@@ -1,0 +1,5 @@
+flask
+flask-cors
+edge-tts
+google-api-python-client
+google-genai
