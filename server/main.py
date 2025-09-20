@@ -1,16 +1,15 @@
-from flask import Flask, send_file, request, jsonify, send_from_directory
+from flask import Flask, send_from_directory, request, jsonify, send_file
 from flask_cors import CORS
 import asyncio, os, edge_tts
 from google import genai
 from google.genai import types
 from googleapiclient.discovery import build
 
-# Set frontend folder correctly relative to root
-app = Flask(__name__, static_folder="client", static_url_path="")
+app = Flask(__name__, static_folder="../client", static_url_path="")
 CORS(app)
 
-GEMINI_API_KEY = "YOUR_API_KEY"
-YOUTUBE_API_KEY = "YOUR_API_KEY"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "YOUR_API_KEY")
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "YOUR_API_KEY")
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 grounding_tool = types.Tool(google_search=types.GoogleSearch())
@@ -20,12 +19,24 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 AUDIO_FILE = os.path.join(UPLOAD_FOLDER, "latest.mp3")
 
-# YouTube search function
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve(path):
+    """
+    Catch-all route to serve frontend files.
+    If file exists in client/, serve it.
+    Otherwise, fallback to index.html (for single-page routing).
+    """
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
+
 def youtube_search(query):
     youtube_set = []
     youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
-    request_api = youtube.search().list(q=query, part="snippet", maxResults=1, type="video")
-    response = request_api.execute()
+    request = youtube.search().list(q=query, part="snippet", maxResults=1, type="video")
+    response = request.execute()
     for item in response["items"]:
         title = item["snippet"]["title"]
         video_id = item["id"]["videoId"]
@@ -33,12 +44,6 @@ def youtube_search(query):
         youtube_set.append({"title": title, "url": video_url})
     return youtube_set
 
-# Serve frontend index.html on /
-@app.route("/")
-def home():
-    return send_from_directory(app.static_folder, "index.html")
-
-# API routes
 @app.route("/ytlink", methods=["GET"])
 def ytlink():
     topic = request.args.get("topic")
@@ -48,28 +53,41 @@ def ytlink():
         return jsonify({"error": "Missing topic, class, or board parameter"}), 400
     query = f"{topic} Class {class_} {board} syllabus"
     youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
-    request_api = youtube.search().list(q=query, part="snippet", maxResults=5, type="video")
+    request_api = youtube.search().list(
+        q=query, part="snippet", maxResults=5, type="video"
+    )
     response = request_api.execute()
-    links = [f"https://www.youtube.com/watch?v={item['id']['videoId']}" for item in response["items"]]
+    links = [
+        f"https://www.youtube.com/watch?v={item['id']['videoId']}"
+        for item in response["items"]
+    ]
     return jsonify(links)
 
 def generate_feynman(name, topic, class_, board):
+    """Generate a simplified explanation using Feynman Technique."""
     prompt = (
-        f"Student Name: {name}\nTopic: {topic}\nClass: {class_}\nBoard: {board}\n\n"
-        f"Explain {topic} to {name} in a short, clear, simple, and detailed but short way "
+        f"Student Name: {name}\n"
+        f"Topic: {topic}\n"
+        f"Class: {class_}\n"
+        f"Board: {board}\n\n"
+        f"Explain {topic} to {name} in a short, clear, simple way "
         f"for a Class {class_} student following the {board} board. "
         f"Use the Feynman Technique: break down the idea into basic terms, avoid jargon, "
-        f"use analogies or examples, and relate it to everyday experiences. "
-        f"Make sure it's easy to understand for their level."
+        f"use analogies or examples, and relate it to everyday experiences."
     )
-    response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt, config=config)
+    response = client.models.generate_content(
+        model="gemini-2.5-flash", contents=prompt, config=config
+    )
     return response.text.strip()
 
 def generate_explanation(name, class_, topic, board):
+    """Generate detailed HTML-friendly explanation."""
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=(f"Explain the topic {topic} of class {class_} to a student named {name} "
-                  f"as per syllabus of {board} elaborately."),
+        contents=(
+            f"Explain the topic {topic} of class {class_} to a student named {name} "
+            f"as per syllabus of {board} elaborately."
+        ),
         config=config
     )
     return response.text
@@ -86,7 +104,9 @@ def generate_audio_post():
     topic = data.get("topic")
     class_ = data.get("class")
     board = data.get("board")
-    explanation = generate_feynman(name, topic, class_, board).replace("\n", " ").replace("*", "")
+    explanation = (
+        generate_feynman(name, topic, class_, board).replace("\n", " ").replace("*", "")
+    )
     asyncio.run(text_to_speech(explanation, AUDIO_FILE))
     if os.path.exists(AUDIO_FILE):
         return send_file(AUDIO_FILE, mimetype="audio/mpeg")
@@ -109,5 +129,6 @@ def generate():
     return jsonify({"txt": explanation})
 
 if __name__ == "__main__":
-    print("Flask server running at http://0.0.0.0:5000")
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Flask server running on http://0.0.0.0:{port}")
+    app.run(host="0.0.0.0", port=port)
