@@ -8,8 +8,8 @@ from googleapiclient.discovery import build
 app = Flask(__name__, static_folder="../client", static_url_path="")
 CORS(app)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "YOUR_API_KEY")
-YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "YOUR_API_KEY")
+GEMINI_API_KEY = "AIzaSyBc70X28NtqrbzEpkz6uKcbLfXgDZ1Sixs"
+YOUTUBE_API_KEY = "AIzaSyAwoGu3XgUVmIPtl2ZGlR1ZoJR-veqEUD4"
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 grounding_tool = types.Tool(google_search=types.GoogleSearch())
@@ -132,3 +132,4 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     print(f"Flask server running on http://0.0.0.0:{port}")
     app.run(host="0.0.0.0", port=port)
+
