@@ -93,6 +93,7 @@ def generate_explanation(name, class_, topic, board):
     return response.text
 
 async def text_to_speech(text, output_path):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     voice = "en-GB-RyanNeural"
     communicate = edge_tts.Communicate(text=text, voice=voice)
     await communicate.save(output_path)
@@ -132,5 +133,6 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     print(f"Flask server running on http://0.0.0.0:{port}")
     app.run(host="0.0.0.0", port=port)
+
 
 
