@@ -152,7 +152,7 @@
                 loader.style.display = "flex";
                 resultDiv.style.display = "none";
 
-                const res = await fetch("http://127.0.0.1:5000/generate", {
+                const res = await fetch("/generate", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
@@ -167,7 +167,7 @@
                 loader.style.display = "none";
                 resultDiv.style.display = "block";
                 clearInterval(interval);
-                outputText.innerHTML = "❌ Error fetching data.";
+                outputText.innerHTML = "Error fetching data.";
                 console.error(err);
             }
         }
@@ -216,5 +216,6 @@
         });
     </script>
 </body>
+
 
 </html>
