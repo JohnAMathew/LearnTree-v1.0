@@ -213,7 +213,7 @@
                     throw new Error("Missing required parameters.");
                 }
 
-                const response = await fetch("http://127.0.0.1:5000/generate_audio", {
+                const response = await fetch("/generate_audio", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -243,5 +243,6 @@
         };
     </script>
 </body>
+
 
 </html>
