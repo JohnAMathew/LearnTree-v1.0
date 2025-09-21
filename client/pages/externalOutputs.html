@@ -100,7 +100,7 @@
 
         async function fetchYouTubeLinks() {
             try {
-                const res = await fetch(`http://127.0.0.1:5000/ytlink?topic=${encodeURIComponent(topic)}&class=${encodeURIComponent(class_)}&board=${encodeURIComponent(board)}`);
+                const res = await fetch(`/ytlink?topic=${encodeURIComponent(topic)}&class=${encodeURIComponent(class_)}&board=${encodeURIComponent(board)}`);
                 if (!res.ok) throw new Error("Failed to fetch YouTube links");
 
                 const links = await res.json();
@@ -134,5 +134,6 @@
     </script>
 
 </body>
+
 
 </html>
