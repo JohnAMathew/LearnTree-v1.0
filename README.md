@@ -20,6 +20,10 @@ Tired of scattered notes, clunky apps, and ineffective revision? LearnTree bring
 
 ---
 ---
+### How to Run?
+Its simple! Visit https://learntree-y2lj.onrender.com/, and start your learning growth
+
+The below steps are for those who want to run LearnTree locally on their devices
 
 ### 🧪 Getting Started
 
@@ -29,6 +33,7 @@ Make sure you have Python 3.7+ installed.
 
 ```bash
 cd server
+pip install requirements.txt
 python main.py
 ```
 This will start the backend server required for AI and TTS features.
